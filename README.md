@@ -35,8 +35,8 @@ Follow these steps to set up and run this UI with your _own_ Cloudflare AutoRAG 
 1.  **Clone the Repository:**
 
     ```bash
-    git clone <repository-url>
-    cd <repository-directory>
+    git clone https://github.com/dhannusch/auto-rag-ui.git
+    cd auto-rag-ui
     ```
 
 2.  **Install Dependencies:**
