@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { useEffect } from "react";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -23,7 +24,36 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+// Function to apply theme based on preference
+function applyTheme() {
+  // --- Restore Original Logic ---
+  // console.log("Applying theme..."); // Optional: Add logging
+  if (
+    localStorage.theme === "dark" ||
+    (!("theme" in localStorage) &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches)
+  ) {
+    // console.log("Adding dark class"); // Optional: Add logging
+    document.documentElement.classList.add("dark");
+  } else {
+    // console.log("Removing dark class"); // Optional: Add logging
+    document.documentElement.classList.remove("dark");
+  }
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  // Apply theme on initial load and when preference changes
+  useEffect(() => {
+    applyTheme(); // Apply on initial load
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    mediaQuery.addEventListener("change", applyTheme); // Listen for changes
+
+    return () => {
+      mediaQuery.removeEventListener("change", applyTheme);
+    };
+  }, []);
+
   return (
     <html lang="en">
       <head>

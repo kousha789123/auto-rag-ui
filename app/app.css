@@ -1,15 +1,70 @@
-@import "tailwindcss" source(".");
+@import "tailwindcss";
+@import "./components/markdown-styles.css";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
+/* Apply base body/html styles using Tailwind defaults + font */
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  font-family: var(--font-sans);
+  /* Using slate for dark mode, white/gray for light */
+  @apply bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+}
+
+/* Ensure prose styles work well with default dark mode */
+.prose {
+}
+
+/* Navbar/Header styling to match Cloudflare docs */
+.cf-header {
+  background-color: var(--nav-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Sidebar styling */
+.cf-sidebar {
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+}
+
+/* Button styling */
+.cf-button-primary {
+  background-color: var(--button-primary-bg);
+  color: white;
+}
+
+.cf-button-secondary {
+  background-color: var(--button-secondary-bg);
+  color: white;
+}
+
+/* Link styling */
+
+/* Card/Surface styling */
+.cf-card {
+  background-color: var(--surface-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+}
+
+/* Code block styling */
+pre {
+  background-color: var(--surface-bg);
+  border: 1px solid var(--border-color);
+}
+
+/* Table styling */
+table {
+  border-color: var(--border-color);
+}
+
+th {
+  background-color: var(--surface-bg);
 }
