@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Modal } from "./Modal"; // Import the new Modal component
+import { Modal } from "./Modal";
 
-// Define the structure of a saved answer (can be shared)
 export type SavedAnswer = {
   id: string;
   question: string;

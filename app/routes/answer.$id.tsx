@@ -31,7 +31,7 @@ type ApiSingleResponse = {
 };
 
 // Loader function to fetch data for a specific answer
-export async function loader({
+export async function clientLoader({
   params,
   request,
 }: LoaderFunctionArgs): Promise<LoaderData> {
@@ -83,9 +83,13 @@ export async function loader({
   }
 }
 
+export function HydrateFallback() {
+  return <div>Loading...</div>;
+}
+
 // Meta function using the defined LoaderData type
 // Pass the loader type directly to the MetaFunction generic
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof clientLoader> = ({ data }) => {
   // data should now be correctly typed as LoaderData | undefined
   const questionSnippet = data?.answer?.question
     ? data.answer.question.substring(0, 50) +
