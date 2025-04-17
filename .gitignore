@@ -29,3 +29,6 @@ build/
 .wrangler
 .dev.vars*
 
+# Test files
+test.txt
+

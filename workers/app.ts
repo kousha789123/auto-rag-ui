@@ -23,8 +23,8 @@ export default {
       // Handle /api/ask endpoint
       if (url.pathname === "/api/ask" && request.method === "POST") {
         try {
-          const { query } = (await request.json()) as { query?: string };
-          console.log("Received /api/ask request with query:", query);
+          const { query, isRegularSearch } = (await request.json()) as { query?: string; isRegularSearch?: boolean };
+          console.log("Received /api/ask request with query:", query, "isRegularSearch:", isRegularSearch);
 
           if (!query || typeof query !== "string") {
             return Response.json(
@@ -34,45 +34,28 @@ export default {
           }
 
           // --- IMPORTANT: Replace "my-autorag" with your actual AutoRAG instance name ---
-          const autoRagInstanceName = "my-autorag";
+          const autoRagInstanceName = "analystreports-cf-rag";
           console.log("Using AutoRAG instance:", autoRagInstanceName);
           // ---------------------------------------------------------------------------
 
-          const aiResponse = await env.AI.autorag(autoRagInstanceName).aiSearch(
-            {
+          let response;
+          if (isRegularSearch) {
+            response = await env.AI.autorag(autoRagInstanceName).search({
               query: query,
-              // Optional: Add other parameters like model, rewrite_query etc. if needed
-              // model: "@cf/meta/llama-3.1-8b-instruct",
-              // rewrite_query: true,
-            } // Removed stream: true and type casts
-          );
-          console.log(
-            "Full response from AI.autorag.aiSearch:",
-            JSON.stringify(aiResponse, null, 2)
-          );
-
-          // Extract the response text directly based on logs
-          let answer: string | undefined | null = null;
-          if (
-            aiResponse &&
-            typeof aiResponse === "object" &&
-            "response" in aiResponse &&
-            typeof aiResponse.response === "string"
-          ) {
-            answer = aiResponse.response;
+            });
+            console.log("Regular search response:", JSON.stringify(response, null, 2));
+            return Response.json({ answer: response });
+          } else {
+            response = await env.AI.autorag(autoRagInstanceName).aiSearch({
+              query: query,
+            });
+            console.log("AI search response:", JSON.stringify(response, null, 2));
+            return Response.json({ answer: response.response });
           }
-          console.log("Extracted answer:", answer);
-
-          return Response.json({
-            answer: answer ?? "No specific answer generated.",
-          });
         } catch (error) {
-          console.error("Error inside /api/ask handler:", error);
-          console.error("Error processing /api/ask:", error);
-          const errorMessage =
-            error instanceof Error ? error.message : "Internal Server Error";
+          console.error("Error processing request:", error);
           return Response.json(
-            { error: "Failed to process request", details: errorMessage },
+            { error: "Failed to process request", details: error instanceof Error ? error.message : String(error) },
             { status: 500 }
           );
         }
