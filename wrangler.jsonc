@@ -34,8 +34,15 @@
       "database_name": "auto_rag_saved_answers_production",
       "database_id": "27bd9ffd-5a34-4698-92d3-96720271ed1e" // TODO: Add your D1 Database ID here after creation
       // "preview_database_id": "" // Optional: Add preview ID for wrangler dev --remote
-    }
-  ]
+    }]
+  ,
+    "r2_buckets": [
+      {
+        "binding": "R2BUCKET",
+        "bucket_name": "analystreports"
+      }
+    ]
+}
 
   /**
    * Environment Variables
@@ -58,4 +65,3 @@
    * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
    */
   // "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
-}

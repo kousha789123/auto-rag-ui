@@ -254,6 +254,52 @@ export default {
         }
       }
 
+      // Handle /api/pdf/:filename endpoint
+      else if (url.pathname.startsWith('/api/pdf/') && request.method === 'GET') {
+        try {
+          const encodedFilename = url.pathname.slice('/api/pdf/'.length);
+          const filename = decodeURIComponent(encodedFilename);
+          
+          console.log('[PDF Route] Debug info:', {
+            encodedFilename,
+            decodedFilename: filename,
+            urlPathname: url.pathname
+          });
+
+          if (!env.R2BUCKET) {
+            console.error('[PDF Route] R2BUCKET binding is not configured');
+            return Response.json({ error: 'Storage configuration error' }, { status: 500 });
+          }
+
+          const file = await env.R2BUCKET.get(filename);
+          
+          if (!file) {
+            return Response.json({
+              error: 'PDF file not found',
+              requestedFile: filename
+            }, { status: 404 });
+          }
+
+          return new Response(file.body, {
+            headers: {
+              'Content-Type': 'application/pdf',
+              'Content-Length': file.size.toString(),
+              'Content-Disposition': `inline; filename*=UTF-8''${encodeURIComponent(filename)}`,
+              'Cache-Control': 'public, max-age=3600',
+              'Accept-Ranges': 'bytes'
+            }
+          });
+
+        } catch (error) {
+          console.error('[PDF Route] Error:', error);
+          return Response.json({
+            error: 'Internal server error',
+            details: error.message,
+            requestUrl: url.pathname
+          }, { status: 500 });
+        }
+      }
+
       // Handle other /api/ routes
       return Response.json(
         { error: "API endpoint not found" },
